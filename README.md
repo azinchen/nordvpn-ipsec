@@ -79,11 +79,6 @@ ENVIRONMENT VARIABLES (only available with `docker run`)
  * `USER` - User for NordVpn account.
  * `PASS` - Password for NordVpn account.
 
-## Examples
-
-Any of the commands can be run at creation with `docker run` or later with
-`docker exec -it openvpn openvpn.sh` (as of version 1.3 of docker).
-
 ## Issues
 
 If you have any problems with or questions about this image, please contact me
