@@ -22,6 +22,18 @@ ip6tables -A OUTPUT -o eth0 -p tcp --dport 1194 -j ACCEPT 2> /dev/null
 iptables  -A OUTPUT -o eth0 -d nordvpn.com -j ACCEPT
 ip6tables -A OUTPUT -o eth0 -d nordvpn.com -j ACCEPT 2> /dev/null
 
+if [ ! -z $NETWORK ]; then
+    gw=`ip route | awk '/default/ {print $3}'`
+    ip route add to $NETWORK via $gw dev eth0
+    iptables -A OUTPUT --destination $NETWORK -j ACCEPT
+fi
+
+if [ ! -z $NETWORK6 ]; then
+    gw=`ip -6 route | awk '/default/ {print $3}'`
+    ip -6 route add to $NETWORK6 via $gw dev eth0
+    ip6tables -A OUTPUT --destination $NETWORK6 -j ACCEPT 2> /dev/null
+fi
+
 base_dir="/vpn"
 ovpn_dir="$base_dir/ovpn"
 auth_file="$base_dir/auth"

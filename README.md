@@ -35,25 +35,25 @@ mode.
 
 Once it's up other containers can be started using it's network connection:
 
-    sudo docker run -it --net=container:vpn -d some/docker-container
+    docker run -it --net=container:vpn -d some/docker-container
 
 ## Local Network access to services connecting to the internet through the VPN.
 
-If the containers using the vpn network is exposing ports you need to include the `-p` parameter to the NordVpn container, like so:
+The environmenta variable NETWORK must be your local network that you would connect to the server running the docker containers on. Running the following on your docker host should give you the correct network: `ip route | awk '!/ (docker0|br-)/ && /src/ {print $1}'`
 
     docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
-                -p 8080:80 \ 
-                -e USER=user@email.com -e PASS=password -d bubuntux/nordvpn
-                
-Now just create the second container _without_ the `-p` parameter, only inlcude the `--net=container:vpn`
+                -p 8080:80 -e NETWORK=192.168.1.0/24 \ 
+                -e USER=user@email.com -e PASS=password -d bubuntux/nordvpn                
 
-    sudo docker run -ti --rm --net=container:vpn -d bubundut/riot-web
+Now just create the second container _without_ the `-p` parameter, only inlcude the `--net=container:vpn`, the port should be declare in the vpn container.
+
+    docker run -ti --rm --net=container:vpn -d bubuntux/riot-web
     
-now the service provided by the second container would be available from the host machine (http://localhost:8080 in this case).
+now the service provided by the second container would be available from the host machine (http://localhost:8080) or anywhere inside the local network (http://192.168.1.xxx:8080).
 
 ## Local Network access to services connecting to the internet through the VPN using a Web proxy.
 
-    sudo docker run -it --name web -p 80:80 -p 443:443 \
+    docker run -it --name web -p 80:80 -p 443:443 \
                 --link vpn:<service_name> -d dperson/nginx \
                 -w "http://<service_name>:<PORT>/<URI>;/<PATH>"
 
@@ -61,23 +61,25 @@ Which will start a Nginx web server on local ports 80 and 443, and proxy any
 requests under `/<PATH>` to the to `http://<service_name>:<PORT>/<URI>`. To use
 a concrete example:
 
-    sudo docker run -it --name bit --net=container:vpn -d bubundut/nordvpn
-    sudo docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
+    docker run -it --name bit --net=container:vpn -d bubundut/nordvpn
+    docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
                 -d dperson/nginx -w "http://bit:9091/transmission;/transmission"
 
 For multiple services (non-existant 'foo' used as an example):
 
-    sudo docker run -it --name bit --net=container:vpn -d dperson/transmission
-    sudo docker run -it --name foo --net=container:vpn -d dperson/foo
-    sudo docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
+    docker run -it --name bit --net=container:vpn -d dperson/transmission
+    docker run -it --name foo --net=container:vpn -d dperson/foo
+    docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
                 --link vpn:foo -d dperson/nginx \
                 -w "http://bit:9091/transmission;/transmission" \
                 -w "http://foo:8000/foo;/foo"
 
 ENVIRONMENT VARIABLES (only available with `docker run`)
 
- * `USER` - User for NordVpn account.
- * `PASS` - Password for NordVpn account.
+ * `USER`     - User for NordVpn account.
+ * `PASS`     - Password for NordVpn account.
+ * `NETWORK`  - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up
+ * `NETWORK6` - CIDR IPv6 network (IE fe00:d34d:b33f::/64), add a route to allows replies once the VPN is up
 
 ## Issues
 
