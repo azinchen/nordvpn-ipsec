@@ -1,4 +1,4 @@
-[![logo](https://github.com/bubuntux/nordvpn/raw/master/NordVpn_logo.png)](https://ref.nordvpn.com/?id=171828599)
+[![logo](https://github.com/azinchen/nordvpn/raw/master/NordVpn_logo.png)](https://ref.nordvpn.com/?id=171828599)
 
 # NordVpn
 
@@ -30,12 +30,19 @@ mode.
 
 ## Starting an NordVpn instance
 
-    docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
-                -e USER=user@email.com -e PASS=password -d bubuntux/nordvpn
+    docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn\
+                -e USER=user@email.com -e PASS=password
+                -e COUNRTY=country1;country2 -e CATEGORY=category1;category2 \
+                -e PROTOCOL=protocol -d azinchen/nordvpn
 
 Once it's up other containers can be started using it's network connection:
 
     docker run -it --net=container:vpn -d some/docker-container
+
+## Filter NordVpn servers
+
+This container selects least loaded server from NordVpn pool. Server list can be filtered
+by setting `COUNTRY`, `CATEGORY` and/or `PROTOCOL` environment variables.
 
 ## Local Network access to services connecting to the internet through the VPN.
 
@@ -43,7 +50,7 @@ The environmenta variable NETWORK must be your local network that you would conn
 
     docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
                 -p 8080:80 -e NETWORK=192.168.1.0/24 \ 
-                -e USER=user@email.com -e PASS=password -d bubuntux/nordvpn                
+                -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
 
 Now just create the second container _without_ the `-p` parameter, only inlcude the `--net=container:vpn`, the port should be declare in the vpn container.
 
@@ -76,12 +83,24 @@ For multiple services (non-existant 'foo' used as an example):
 
 ENVIRONMENT VARIABLES (only available with `docker run`)
 
+ * `COUNTRY`  - Use servers from countries in the list (IE Australia;New Zeland). Several countries can be selected using semicolon.
+ * `CATEGORY` - Use servers from specific categories (IE P2P;Anti DDoS). Several categories can be selected using semicolon. Allowed categories are:
+   * `Anti DDoS`
+   * `Dedicated IP servers`
+   * `Double VPN`
+   * `Obfuscated Servers`
+   * `Onion Over VPN`
+   * `P2P`
+   * `Standard VPN servers`
+ * `PROTOCOL` - Specify OpenVPN protocol. Only one protocol can be selected. Allowed protocols are:
+   * `openvpn_udp`
+   * `openvpn_tcp`
  * `USER`     - User for NordVpn account.
  * `PASS`     - Password for NordVpn account.
- * `NETWORK`  - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up
- * `NETWORK6` - CIDR IPv6 network (IE fe00:d34d:b33f::/64), add a route to allows replies once the VPN is up
+ * `NETWORK`  - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up.
+ * `NETWORK6` - CIDR IPv6 network (IE fe00:d34d:b33f::/64), add a route to allows replies once the VPN is up.
 
 ## Issues
 
 If you have any problems with or questions about this image, please contact me
-through a [GitHub issue](https://github.com/bubuntux/nordvpn/issues).
+through a [GitHub issue](https://github.com/azinchen/nordvpn/issues).
