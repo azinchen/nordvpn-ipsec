@@ -72,7 +72,8 @@ servers=`echo $filtered | jq -s -a 'unique[]'`
 filtered=""
 
 if [[ -z "${PROTOCOL}" ]]; then
-    filtered=$servers
+    filtered=`echo $servers | jq -c 'select(.features.openvpn_udp == true)'\
+        echo $servers | jq -c 'select(.features.openvpn_tcp == true)'`
 else
     filtered=`echo $servers | jq -c 'select(.features.'$PROTOCOL' == true)'`
 fi
