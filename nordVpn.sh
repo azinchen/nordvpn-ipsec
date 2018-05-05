@@ -1,4 +1,11 @@
-#!/bin/sh
+#!/bin/bash
+
+# Use api.nordvpn.com
+servers=`curl -s https://api.nordvpn.com/server | jq -c '.[]'`
+
+# Get NordVpn server recomendations
+recomendations=`curl -s https://nordvpn.com/wp-admin/admin-ajax.php?action=servers_recommendations |\
+                jq -r '.[] | .hostname' | shuf`
 
 # Firewall everything has to go through the vpn
 iptables  -F OUTPUT
@@ -38,27 +45,79 @@ base_dir="/vpn"
 ovpn_dir="$base_dir/ovpn"
 auth_file="$base_dir/auth"
 
-# Get NordVpn server recomendations
-recomendations=`curl -s https://nordvpn.com/wp-admin/admin-ajax.php?action=servers_recommendations |\
-                jq -r '.[] | .hostname' | shuf`
+IFS=';'
 
-for recomendation in ${recomendations}; do # Prefer UDP
-    config_file="${ovpn_dir}/${recomendation}.udp.ovpn"
-    if [ -r "$config_file" ]; then
-        config="$config_file"
-        break
+if [[ -z "${COUNTRY}" ]]; then
+    filtered="$servers"
+else
+    read -ra countries <<< "$COUNTRY"
+    for country in "${countries[@]}"; do
+        filtered="$filtered"`echo $servers | jq -c 'select(.country == "'$country'")'`
+    done
+fi
+
+servers=`echo $filtered | jq -s -a 'unique[]'`
+filtered=""
+
+if [[ -z "${CATEGORY}" ]]; then
+    filtered="$servers"
+else
+    read -ra categories <<< "$CATEGORY"
+    for category in "${categories[@]}"; do
+        filtered="$filtered"`echo $servers | jq -c 'select(.categories[].name == "'$category'")'`
+    done
+fi
+
+servers=`echo $filtered | jq -s -a 'unique[]'`
+filtered=""
+
+if [[ -z "${PROTOCOL}" ]]; then
+    filtered=$servers
+else
+    filtered=`echo $servers | jq -c 'select(.features.'$PROTOCOL' == true)'`
+fi
+
+servers=`echo $filtered | jq -s -c 'unique[]' | jq -s -c 'sort_by(.load)[]' | jq -r '.domain'`
+IFS=$'\n'
+read -ra filtered <<< "$servers"
+
+for server in "${filtered[@]}"; do
+    if [[ -z "${PROTOCOL}" ]] || [[ "${PROTOCOL}" == "openvpn_udp" ]]; then
+        config_file="${ovpn_dir}/${server}.udp.ovpn"
+        if [ -r "$config_file" ]; then
+            config="$config_file"
+            break
+        fi
+    fi
+    if [[ -z "${PROTOCOL}" ]] || [[ "${PROTOCOL}" == "openvpn_tcp" ]]; then
+        config_file="${ovpn_dir}/${server}.tcp.ovpn"
+        if [ -r "$config_file" ]; then
+            config="$config_file"
+            break
+        fi
     fi
 done
-if [ -z $config ]; then # Use TCP if UDP not available
-   for recomendation in ${recomendations}; do
-        config_file="${ovpn_dir}/${recomendation}.tcp.ovpn"
+
+if [ -z $config ]; then
+    for server in ${recomendations}; do # Prefer UDP
+        config_file="${ovpn_dir}/${server}.udp.ovpn"
         if [ -r "$config_file" ]; then
             config="$config_file"
             break
         fi
     done
+    if [ -z $config ]; then # Use TCP if UDP not available
+       for server in ${recomendations}; do
+            config_file="${ovpn_dir}/${server}.tcp.ovpn"
+            if [ -r "$config_file" ]; then
+                config="$config_file"
+                break
+            fi
+        done
+    fi
 fi
-if [ -z $config ]; then # If recomendation was not found, use a random server
+
+if [ -z $config ]; then
     config="${ovpn_dir}/`ls ${ovpn_dir} | shuf -n 1`"
 fi
 
