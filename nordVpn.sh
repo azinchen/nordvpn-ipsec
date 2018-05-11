@@ -19,10 +19,10 @@ iptables  -A OUTPUT -o eth0 -p udp --dport 1194 -j ACCEPT
 ip6tables -A OUTPUT -o eth0 -p udp --dport 1194 -j ACCEPT 2> /dev/null
 iptables  -A OUTPUT -o eth0 -p tcp --dport 1194 -j ACCEPT 
 ip6tables -A OUTPUT -o eth0 -p tcp --dport 1194 -j ACCEPT 2> /dev/null
-iptables  -A OUTPUT -o eth0 -d nordvpn.com -j ACCEPT
-ip6tables -A OUTPUT -o eth0 -d nordvpn.com -j ACCEPT 2> /dev/null
-iptables  -A OUTPUT -o eth0 -d api.nordvpn.com -j ACCEPT
-ip6tables -A OUTPUT -o eth0 -d api.nordvpn.com -j ACCEPT 2> /dev/null
+
+iptables_domain=`echo $URL_NORDVPN_API | awk -F/ '{print $3}'`
+iptables  -A OUTPUT -o eth0 -d $iptables_domain -j ACCEPT
+ip6tables -A OUTPUT -o eth0 -d $iptables_domain -j ACCEPT 2> /dev/null
 
 if [ ! -z $NETWORK ]; then
     gw=`ip route | awk '/default/ {print $3}'`
@@ -97,8 +97,8 @@ if [[ !($pool_length -eq 0) ]]; then
 fi
 
 if [[ !($pool_length -eq 0) ]]; then
-    echo "Filter pool by load, less than 70%"
-    servers=`echo $servers | jq -c 'select(.load <= 70)'`
+    echo "Filter pool by load, less than $MAX_LOAD%"
+    servers=`echo $servers | jq -c 'select(.load <= '$MAX_LOAD')'`
     pool_length=`echo $servers | jq -s -a -c 'unique' | jq 'length'`
     echo "Servers in filtered pool: $pool_length"
     servers=`echo $servers | jq -s -c 'sort_by(.load)[]'`
@@ -137,8 +137,10 @@ done
 
 if [ -z $config ]; then
     echo "Filtered pool is empty or configs not found. Select server from recommended list"
-    recommendations=`curl -s https://nordvpn.com/wp-admin/admin-ajax.php?action=servers_recommendations |\
-                    jq -r '.[] | .hostname' | shuf`
+    iptables_domain=`echo $URL_RECOMMENDED_SERVERS | awk -F/ '{print $3}'`
+    iptables  -A OUTPUT -o eth0 -d $iptables_domain -j ACCEPT
+    ip6tables -A OUTPUT -o eth0 -d $iptables_domain -j ACCEPT 2> /dev/null
+    recommendations=`curl -s $URL_RECOMMENDED_SERVERS | jq -r '.[] | .hostname' | shuf`
     for server in ${recommendations}; do # Prefer UDP
         config_file="${ovpn_dir}/${server}.udp.ovpn"
         if [ -r "$config_file" ]; then
