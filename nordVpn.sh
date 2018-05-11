@@ -40,6 +40,18 @@ base_dir="/vpn"
 ovpn_dir="$base_dir/ovpn"
 auth_file="$base_dir/auth"
 
+if [ `ls -A $ovpn_dir | wc -l` -eq 0 ]
+then
+    echo "Server configs not found. Download configs from NordVPN"
+    iptables_domain=`echo $URL_OVPN_FILES | awk -F/ '{print $3}'`
+    iptables  -A OUTPUT -o eth0 -d $iptables_domain -j ACCEPT
+    ip6tables -A OUTPUT -o eth0 -d $iptables_domain -j ACCEPT 2> /dev/null
+    curl -s $URL_OVPN_FILES -o /tmp/ovpn.zip
+    unzip -q /tmp/ovpn.zip -d /tmp/ovpn
+    mv /tmp/ovpn/*/*.ovpn $ovpn_dir
+    rm -rf /tmp/*
+fi
+
 # Use api.nordvpn.com
 servers=`curl -s https://api.nordvpn.com/server`
 servers=`echo $servers | jq -c '.[] | select(.features.openvpn_udp == true)' &&\
