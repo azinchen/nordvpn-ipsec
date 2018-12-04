@@ -21,7 +21,7 @@ This container was designed to be started first to provide a connection to other
     docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
                 -e USER=user@email.com -e PASS=password \
                 -e RANDOM_TOP=n -e RECREATE_VPN_CRON=string \
-                -e COUNRTY=country1;country2 -e CATEGORY=category1;category2 \
+                -e COUNTRY=country1;country2 -e CATEGORY=category1;category2 \
                 -e PROTOCOL=protocol -d azinchen/nordvpn
 
 Once it's up other containers can be started using it's network connection:
@@ -34,7 +34,7 @@ This container selects least loaded server from NordVPN pool. Server list can be
 
 ## Local Network access to services connecting to the internet through the VPN.
 
-The environmenta variable NETWORK must be your local network that you would connect to the server running the docker containers on. Running the following on your docker host should give you the correct network: `ip route | awk '!/ (docker0|br-)/ && /src/ {print $1}'`
+The environment variable NETWORK must be your local network that you would connect to the server running the docker containers on. Running the following on your docker host should give you the correct network: `ip route | awk '!/ (docker0|br-)/ && /src/ {print $1}'`
 
     docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
                 -p 8080:80 -e NETWORK=192.168.1.0/24 \ 
