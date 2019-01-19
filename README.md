@@ -32,6 +32,16 @@ Once it's up other containers can be started using it's network connection:
 
 This container selects least loaded server from NordVPN pool. Server list can be filtered by setting `COUNTRY`, `CATEGORY` and/or `PROTOCOL` environment variables. If filtered list is empty, recommended server is selected.
 
+## Reconnect by cron
+
+This containet selects server and its config during startup and mantain connection until stop. Selected server might be changed using cron via `RECREATE_VPN_CRON` environment variable.
+
+    docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
+                -e RECREATE_VPN_CRON="5 */3 * * *" -e RANDOM_TOP=10
+                -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+
+In this example the VPN connection will be reconnected in the 5th minute every 3 hours.
+
 ## Local Network access to services connecting to the internet through the VPN.
 
 The environment variable NETWORK must be your local network that you would connect to the server running the docker containers on. Running the following on your docker host should give you the correct network: `ip route | awk '!/ (docker0|br-)/ && /src/ {print $1}'`
@@ -71,8 +81,7 @@ ENVIRONMENT VARIABLES
 
  * `COUNTRY`           - Use servers from countries in the list (IE Australia;New Zeland). Several countries can be selected using semicolon.
  * `CATEGORY`          - Use servers from specific categories (IE P2P;Anti DDoS). Several categories can be selected using semicolon. Allowed categories are:
-   * `Anti DDoS`
-   * `Dedicated IP servers`
+   * `Dedicated IP`
    * `Double VPN`
    * `Obfuscated Servers`
    * `Onion Over VPN`
@@ -82,7 +91,7 @@ ENVIRONMENT VARIABLES
    * `openvpn_udp`
    * `openvpn_tcp`
  * `RANDOM_TOP`        - Place n servers from filtered list in random order. Useful with `RECREATE_VPN_CRON`.
- * `RECREATE_VPN_CRON` - Set period of selecting new server in format for crontab file.
+ * `RECREATE_VPN_CRON` - Set period of selecting new server in format for crontab file. Disabled by default.
  * `USER`              - User for NordVPN account.
  * `PASS`              - Password for NordVPN account.
  * `NETWORK`           - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up.
