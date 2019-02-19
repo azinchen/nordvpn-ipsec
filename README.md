@@ -34,10 +34,10 @@ The architectures supported by this image are:
 
 ```
 docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
-            -e USER=user@email.com -e PASS=password \
-            -e RANDOM_TOP=n -e RECREATE_VPN_CRON=string \
-            -e COUNTRY=country1;country2 -e CATEGORY=category1;category2 \
-            -e PROTOCOL=protocol -d azinchen/nordvpn
+           -e USER=user@email.com -e PASS=password \
+           -e RANDOM_TOP=n -e RECREATE_VPN_CRON=string \
+           -e COUNTRY=country1;country2 -e CATEGORY=category1;category2 \
+           -e PROTOCOL=protocol -d azinchen/nordvpn
 ```
 
 Once it's up other containers can be started using it's network connection:
@@ -56,8 +56,8 @@ This containet selects server and its config during startup and mantain connecti
 
 ```
 docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
-            -e RECREATE_VPN_CRON="5 */3 * * *" -e RANDOM_TOP=10
-            -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+           -e RECREATE_VPN_CRON="5 */3 * * *" -e RANDOM_TOP=10
+           -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
 ```
 
 In this example the VPN connection will be reconnected in the 5th minute every 3 hours.
@@ -68,8 +68,8 @@ The environment variable NETWORK must be your local network that you would conne
 
 ```
 docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
-            -p 8080:80 -e NETWORK=192.168.1.0/24 \ 
-            -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+           -p 8080:80 -e NETWORK=192.168.1.0/24 \ 
+           -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
 ```
 
 Now just create the second container _without_ the `-p` parameter, only inlcude the `--net=container:vpn`, the port should be declare in the vpn container.
@@ -84,8 +84,8 @@ now the service provided by the second container would be available from the hos
 
 ```
 docker run -it --name web -p 80:80 -p 443:443 \
-            --link vpn:<service_name> -d dperson/nginx \
-            -w "http://<service_name>:<PORT>/<URI>;/<PATH>"
+           --link vpn:<service_name> -d dperson/nginx \
+           -w "http://<service_name>:<PORT>/<URI>;/<PATH>"
 ```
 
 Which will start a Nginx web server on local ports 80 and 443, and proxy any requests under `/<PATH>` to the to `http://<service_name>:<PORT>/<URI>`. To use a concrete example:
@@ -93,7 +93,7 @@ Which will start a Nginx web server on local ports 80 and 443, and proxy any req
 ```
 docker run -it --name bit --net=container:vpn -d bubundut/nordvpn
 docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
-            -d dperson/nginx -w "http://bit:9091/transmission;/transmission"
+           -d dperson/nginx -w "http://bit:9091/transmission;/transmission"
 ```
 
 For multiple services (non-existant 'foo' used as an example):
@@ -102,12 +102,12 @@ For multiple services (non-existant 'foo' used as an example):
 docker run -it --name bit --net=container:vpn -d dperson/transmission
 docker run -it --name foo --net=container:vpn -d dperson/foo
 docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
-            --link vpn:foo -d dperson/nginx \
-            -w "http://bit:9091/transmission;/transmission" \
-            -w "http://foo:8000/foo;/foo"
+           --link vpn:foo -d dperson/nginx \
+           -w "http://bit:9091/transmission;/transmission" \
+           -w "http://foo:8000/foo;/foo"
 ```
 
-## Environment variables
+# Environment variables
 
 Container images are configured using environment variables passed at runtime.
 
@@ -129,6 +129,20 @@ Container images are configured using environment variables passed at runtime.
  * `NETWORK`           - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up.
  * `NETWORK6`          - CIDR IPv6 network (IE fe00:d34d:b33f::/64), add a route to allows replies once the VPN is up.
 
-## Issues
+## Environment variable's keywords
+
+The list of keywords for environment variables might be changed, check the allowed keywords by the following commands:
+
+`COUNTRY`
+```
+curl -s https://api.nordvpn.com/server | jq -c '.[] | .country' | jq -s -a -c 'unique | .[]'
+```
+
+`CATEGORY`
+```
+curl -s https://api.nordvpn.com/server | jq -c '.[] | .categories[].name' | jq -s -a -c 'unique | .[]'
+```
+
+# Issues
 
 If you have any problems with or questions about this image, please contact me through a [GitHub issue](https://github.com/azinchen/nordvpn/issues) or [email](mailto:alexander@zinchenko.com).
