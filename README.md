@@ -16,17 +16,35 @@ This container was designed to be started first to provide a connection to other
 
 **NOTE 2**: If you need a template for using this container with `docker-compose`, see the example [file](https://github.com/dperson/openvpn-client/raw/master/docker-compose.yml).
 
+## Supported Architectures
+
+The image supports multiple architectures such as `x86-64` and `armhf`. You can pull specific arch images via tags.
+
+The new features are introduced to 'beta' version, but this version might contain issues. Avoid to use 'beta' image in production environment.
+
+The architectures supported by this image are:
+
+| Architecture | Tag |
+| :----: | --- |
+| x86-64 | latest |
+| x86-64 | beta |
+| armhf | armhf |
+
 ## Starting an NordVPN instance
 
-    docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
-                -e USER=user@email.com -e PASS=password \
-                -e RANDOM_TOP=n -e RECREATE_VPN_CRON=string \
-                -e COUNTRY=country1;country2 -e CATEGORY=category1;category2 \
-                -e PROTOCOL=protocol -d azinchen/nordvpn
+```
+docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
+            -e USER=user@email.com -e PASS=password \
+            -e RANDOM_TOP=n -e RECREATE_VPN_CRON=string \
+            -e COUNTRY=country1;country2 -e CATEGORY=category1;category2 \
+            -e PROTOCOL=protocol -d azinchen/nordvpn
+```
 
 Once it's up other containers can be started using it's network connection:
 
-    docker run -it --net=container:vpn -d some/docker-container
+```
+docker run -it --net=container:vpn -d some/docker-container
+```
 
 ## Filter NordVPN servers
 
@@ -36,48 +54,62 @@ This container selects least loaded server from NordVPN pool. Server list can be
 
 This containet selects server and its config during startup and mantain connection until stop. Selected server might be changed using cron via `RECREATE_VPN_CRON` environment variable.
 
-    docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
-                -e RECREATE_VPN_CRON="5 */3 * * *" -e RANDOM_TOP=10
-                -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+```
+docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
+            -e RECREATE_VPN_CRON="5 */3 * * *" -e RANDOM_TOP=10
+            -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+```
 
 In this example the VPN connection will be reconnected in the 5th minute every 3 hours.
 
-## Local Network access to services connecting to the internet through the VPN.
+## Local Network access to services connecting to the internet through the VPN
 
 The environment variable NETWORK must be your local network that you would connect to the server running the docker containers on. Running the following on your docker host should give you the correct network: `ip route | awk '!/ (docker0|br-)/ && /src/ {print $1}'`
 
-    docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
-                -p 8080:80 -e NETWORK=192.168.1.0/24 \ 
-                -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+```
+docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
+            -p 8080:80 -e NETWORK=192.168.1.0/24 \ 
+            -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+```
 
 Now just create the second container _without_ the `-p` parameter, only inlcude the `--net=container:vpn`, the port should be declare in the vpn container.
 
-    docker run -ti --rm --net=container:vpn -d bubuntux/riot-web
+```
+docker run -ti --rm --net=container:vpn -d bubuntux/riot-web
+```
 
 now the service provided by the second container would be available from the host machine (http://localhost:8080) or anywhere inside the local network (http://192.168.1.xxx:8080).
 
-## Local Network access to services connecting to the internet through the VPN using a Web proxy.
+## Local Network access to services connecting to the internet through the VPN using a Web proxy
 
-    docker run -it --name web -p 80:80 -p 443:443 \
-                --link vpn:<service_name> -d dperson/nginx \
-                -w "http://<service_name>:<PORT>/<URI>;/<PATH>"
+```
+docker run -it --name web -p 80:80 -p 443:443 \
+            --link vpn:<service_name> -d dperson/nginx \
+            -w "http://<service_name>:<PORT>/<URI>;/<PATH>"
+```
 
 Which will start a Nginx web server on local ports 80 and 443, and proxy any requests under `/<PATH>` to the to `http://<service_name>:<PORT>/<URI>`. To use a concrete example:
 
-    docker run -it --name bit --net=container:vpn -d bubundut/nordvpn
-    docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
-                -d dperson/nginx -w "http://bit:9091/transmission;/transmission"
+```
+docker run -it --name bit --net=container:vpn -d bubundut/nordvpn
+docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
+            -d dperson/nginx -w "http://bit:9091/transmission;/transmission"
+```
 
 For multiple services (non-existant 'foo' used as an example):
 
-    docker run -it --name bit --net=container:vpn -d dperson/transmission
-    docker run -it --name foo --net=container:vpn -d dperson/foo
-    docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
-                --link vpn:foo -d dperson/nginx \
-                -w "http://bit:9091/transmission;/transmission" \
-                -w "http://foo:8000/foo;/foo"
+```
+docker run -it --name bit --net=container:vpn -d dperson/transmission
+docker run -it --name foo --net=container:vpn -d dperson/foo
+docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
+            --link vpn:foo -d dperson/nginx \
+            -w "http://bit:9091/transmission;/transmission" \
+            -w "http://foo:8000/foo;/foo"
+```
 
-ENVIRONMENT VARIABLES
+## Environment variables
+
+Container images are configured using environment variables passed at runtime.
 
  * `COUNTRY`           - Use servers from countries in the list (IE Australia;New Zeland). Several countries can be selected using semicolon.
  * `CATEGORY`          - Use servers from specific categories (IE P2P;Anti DDoS). Several categories can be selected using semicolon. Allowed categories are:
