@@ -52,7 +52,7 @@ This container selects least loaded server from NordVPN pool. Server list can be
 
 ## Reconnect by cron
 
-This containet selects server and its config during startup and mantain connection until stop. Selected server might be changed using cron via `RECREATE_VPN_CRON` environment variable.
+This container selects server and its config during startup and mantain connection until stop. Selected server might be changed using cron via `RECREATE_VPN_CRON` environment variable.
 
 ```
 docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
