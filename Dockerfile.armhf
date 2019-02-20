@@ -1,4 +1,4 @@
-FROM resin/armhf-alpine:latest
+FROM balenalib/armv7hf-alpine:latest
 
 LABEL maintainer="Alexander Zinchenko <alexander@zinchenko.com>"
 
