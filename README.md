@@ -128,6 +128,7 @@ Container images are configured using environment variables passed at runtime.
  * `PASS`              - Password for NordVPN account.
  * `NETWORK`           - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up.
  * `NETWORK6`          - CIDR IPv6 network (IE fe00:d34d:b33f::/64), add a route to allows replies once the VPN is up.
+ * `OPENVPN_OPTS`      - Used to pass extra parameters to openvpn [full list](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-4/).
 
 ## Environment variable's keywords
 
