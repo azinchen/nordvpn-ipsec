@@ -27,6 +27,10 @@ RUN ["cross-build-end"]
 
 COPY root/ /
 
+RUN ["cross-build-start"]
+RUN chmod +x /app/*
+RUN ["cross-build-end"]
+
 VOLUME ["/ovpn/"]
 
 ENTRYPOINT ["/init"]

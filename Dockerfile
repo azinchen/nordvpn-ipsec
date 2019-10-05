@@ -25,6 +25,8 @@ RUN \
 
 COPY root/ /
 
+RUN chmod +x /app/*
+
 VOLUME ["/ovpn/"]
 
 ENTRYPOINT ["/init"]

@@ -1,7 +1,0 @@
-#!/usr/bin/with-contenv bash
-
-echo "Set app permisions"
-chmod +x /app/createvpnconfig.sh
-chmod +x /app/reconnect.sh
-
-exit 0
