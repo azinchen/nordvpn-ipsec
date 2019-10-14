@@ -20,15 +20,16 @@ This container was designed to be started first to provide a connection to other
 
 The image supports multiple architectures such as `x86-64` and `armhf`. You can pull specific arch images via tags.
 
-The new features are introduced to 'beta' version, but this version might contain issues. Avoid to use 'beta' image in production environment.
+The new features are introduced to 'edge' version, but this version might contain issues. Avoid to use 'edge' image in production environment.
 
 The architectures supported by this image are:
 
 | Architecture | Tag |
 | :----: | --- |
 | x86-64 | latest |
-| x86-64 | beta |
+| x86-64 | edge |
 | armhf | armhf |
+| aarch64 | aarch64 |
 
 ## Starting an NordVPN instance
 

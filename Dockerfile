@@ -9,8 +9,7 @@ ENV URL_NORDVPN_API="https://api.nordvpn.com/server" \
     RANDOM_TOP=0 \
     OPENVPN_OPTS=""
 
-RUN \
-    echo "**** upgrade packages ****" && \
+RUN echo "**** upgrade packages ****" && \
     apk --no-cache --no-progress upgrade && \
     echo "**** install packages ****" && \
     apk --no-cache --no-progress add bash curl unzip tar iptables ip6tables jq openvpn && \
@@ -19,8 +18,8 @@ RUN \
         "https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz" && \
     tar xfz /tmp/s6-overlay.tar.gz -C / && \
     echo "**** create folders ****" && \
-    mkdir -p /vpn &&\
-    mkdir -p /ovpn &&\
+    mkdir -p /vpn && \
+    mkdir -p /ovpn && \
     echo "**** cleanup ****" && \
     apk del --purge tar && \
     rm -rf /tmp/*
@@ -29,6 +28,6 @@ COPY root/ /
 
 RUN chmod +x /app/*
 
-VOLUME ["/ovpn/"]
+VOLUME ["/ovpn"]
 
 ENTRYPOINT ["/init"]
