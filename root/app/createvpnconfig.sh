@@ -52,15 +52,11 @@ if [[ !($pool_length -eq 0) ]]; then
 fi
 
 if [[ !($pool_length -eq 0) ]]; then
-    if [[ -z "${PROTOCOL}" ]]; then
-        echo "Protocol not set, skip filtering"
-    else
-        echo "Filter pool by protocol: $PROTOCOL"
-        filtered=`echo $servers | jq -c 'select(.features.'$PROTOCOL' == true)' | jq -s -a -c 'unique'`
-        pool_length=`echo $filtered | jq 'length'`
-        echo "Servers in filtered pool: $pool_length"
-        servers=`echo $filtered | jq -c '.[]'`
-    fi
+    echo "Filter pool by protocol: $PROTOCOL"
+    filtered=`echo $servers | jq -c 'select(.features.'$PROTOCOL' == true)' | jq -s -a -c 'unique'`
+    pool_length=`echo $filtered | jq 'length'`
+    echo "Servers in filtered pool: $pool_length"
+    servers=`echo $filtered | jq -c '.[]'`
 fi
 
 if [[ !($pool_length -eq 0) ]]; then
@@ -92,7 +88,7 @@ IFS=$'\n'
 read -ra filtered <<< "$servers"
 
 for server in "${filtered[@]}"; do
-    if [[ -z "${PROTOCOL}" ]] || [[ "${PROTOCOL}" == "openvpn_udp" ]]; then
+    if [[ "${PROTOCOL}" == "openvpn_udp" ]]; then
         config="${ovpn_dir}/${server}.udp.ovpn"
         if [ -r "$config" ]; then
             break
@@ -100,7 +96,7 @@ for server in "${filtered[@]}"; do
             echo "UDP config for server $server not found"
         fi
     fi
-    if [[ -z "${PROTOCOL}" ]] || [[ "${PROTOCOL}" == "openvpn_tcp" ]]; then
+    if [[ "${PROTOCOL}" == "openvpn_tcp" ]]; then
         config="${ovpn_dir}/${server}.tcp.ovpn"
         if [ -r "$config" ]; then
             break
