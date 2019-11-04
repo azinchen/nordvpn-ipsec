@@ -117,7 +117,6 @@ Container images are configured using environment variables passed at runtime.
    * `Dedicated IP`
    * `Double VPN`
    * `Obfuscated Servers`
-   * `Onion Over VPN`
    * `P2P`
    * `Standard VPN servers`
  * `PROTOCOL`          - Specify OpenVPN protocol. Only one protocol can be selected. Allowed protocols are:
