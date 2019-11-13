@@ -126,8 +126,8 @@ Container images are configured using environment variables passed at runtime.
  * `RECREATE_VPN_CRON` - Set period of selecting new server in format for crontab file. Disabled by default.
  * `USER`              - User for NordVPN account.
  * `PASS`              - Password for NordVPN account.
- * `NETWORK`           - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up.
- * `NETWORK6`          - CIDR IPv6 network (IE fe00:d34d:b33f::/64), add a route to allows replies once the VPN is up.
+ * `NETWORK`           - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up. Several networks can be added to route using semicolon.
+ * `NETWORK6`          - CIDR IPv6 network (IE fe00:d34d:b33f::/64), add a route to allows replies once the VPN is up. Several networks can be added to route using semicolon.
  * `OPENVPN_OPTS`      - Used to pass extra parameters to openvpn [full list](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-4/).
 
 ## Environment variable's keywords
@@ -147,3 +147,4 @@ curl -s https://api.nordvpn.com/server | jq -c '.[] | .categories[].name' | jq -
 # Issues
 
 If you have any problems with or questions about this image, please contact me through a [GitHub issue](https://github.com/azinchen/nordvpn/issues) or [email](mailto:alexander@zinchenko.com).
+
