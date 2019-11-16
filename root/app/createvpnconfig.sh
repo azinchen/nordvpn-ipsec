@@ -9,7 +9,7 @@ config_file="$base_dir/config.ovpn"
 
 # Use api.nordvpn.com
 servers=`curl -s $URL_NORDVPN_API`
-servers=`echo $servers | jq -c '.[] | select(.features.openvpn_udp == true)' &&\
+servers=`echo $servers | jq -c '.[] | select(.features.openvpn_udp == true)' && \
          echo $servers | jq -c '.[] | select(.features.openvpn_tcp == true)'`
 servers=`echo $servers | jq -s -a -c 'unique'`
 pool_length=`echo $servers | jq 'length'`

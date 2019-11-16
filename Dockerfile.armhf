@@ -9,7 +9,8 @@ ENV URL_NORDVPN_API="https://api.nordvpn.com/server" \
     PROTOCOL=openvpn_udp \
     MAX_LOAD=70 \
     RANDOM_TOP=0 \
-    OPENVPN_OPTS=""
+    CHECK_CONNECTION_ATTEMPTS=5 \
+    CHECK_CONNECTION_ATTEMPT_INTERVAL=10
 
 ADD https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-armhf.tar.gz /tmp/s6-overlay.tar.gz
 
@@ -24,7 +25,8 @@ RUN echo "**** upgrade packages ****" && \
     mkdir -p /ovpn && \
     echo "**** cleanup ****" && \
     apk del --purge tar && \
-    rm -rf /tmp/*
+    rm -rf /tmp/* && \
+    rm -rf /var/cache/apk/*
 
 COPY root/ /
 

@@ -7,8 +7,13 @@ rm -f "$cron_file"
 touch "$cron_file"
 
 if [[ "${RECREATE_VPN_CRON}" ]]; then
-    echo "Create cron file"
+    echo "Create reconnection cron"
     echo "$RECREATE_VPN_CRON /app/reconnect.sh" >> "$cron_file"
+fi
+
+if [[ "${CHECK_CONNECTION_CRON}" ]]; then
+    echo "Create connectivity check cron"
+    echo "$CHECK_CONNECTION_CRON /app/checkconnection.sh" >> "$cron_file"
 fi
 
 exit 0

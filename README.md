@@ -63,6 +63,18 @@ docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
 
 In this example the VPN connection will be reconnected in the 5th minute every 3 hours.
 
+## Check Internet connection by cron
+
+This container checks Internet connection via VPN by cron.
+
+```
+docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
+           -e CHECK_CONNECTION_CRON="*/5 * * * *" -e CHECK_CONNECTION_URL="https://www.google.com"
+           -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+```
+
+In this example the VPN connection will be checked every 5 minutes.
+
 ## Local Network access to services connecting to the internet through the VPN
 
 The environment variable NETWORK must be your local network that you would connect to the server running the docker containers on. Running the following on your docker host should give you the correct network: `ip route | awk '!/ (docker0|br-)/ && /src/ {print $1}'`
@@ -124,6 +136,10 @@ Container images are configured using environment variables passed at runtime.
    * `openvpn_tcp`
  * `RANDOM_TOP`        - Place n servers from filtered list in random order. Useful with `RECREATE_VPN_CRON`.
  * `RECREATE_VPN_CRON` - Set period of selecting new server in format for crontab file. Disabled by default.
+ * `CHECK_CONNECTION_CRON` - Set period of checking Internet connection in format for crontab file. Disabled by default.
+ * `CHECK_CONNECTION_URL` - Use list of URI for checking Internet connection.
+ * `CHECK_CONNECTION_ATTEMPTS` - Set number of attemps of checking. Default value is 5.
+ * `CHECK_CONNECTION_ATTEMPT_INTERVAL` - Set sleep timeouts between failed attepms. Default value is 10.
  * `USER`              - User for NordVPN account.
  * `PASS`              - Password for NordVPN account.
  * `NETWORK`           - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up. Several networks can be added to route using semicolon.
