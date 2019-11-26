@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-echo "Check VPN Internet connection"
+echo "`date` Check VPN Internet connection"
 
 function httpreq
 {
@@ -25,6 +25,7 @@ while [ $counter -le $CHECK_CONNECTION_ATTEMPTS ]; do
         fi
     done
 
+    echo "Sleep between iteration for $CHECK_CONNECTION_ATTEMPT_INTERVAL"
     sleep $CHECK_CONNECTION_ATTEMPT_INTERVAL
     ((counter++))
 done
