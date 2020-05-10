@@ -1,6 +1,18 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-[[ "${DOCKER_TAG}" == "latest" ]] || [[ "${DOCKER_TAG}" == "edge" ]] && \
-    { echo 'qemu-user-static: Registration not required for this arch';exit 0; }
+my_dir="$(dirname "${BASH_SOURCE[0]}")"
+source "$my_dir/_env"
 
 docker run --rm --privileged multiarch/qemu-user-static:register --reset
+
+for target in ${targets[*]}; do
+    target_file=Dockerfile.target-$target
+    cp Dockerfile.template $target_file
+    if [[ $target == "x86_64" ]]; then
+        sed -i -- "/__QEMU_ARCH__/d" $target_file
+    else
+        sed -i -- "s/__QEMU_ARCH__/$(qemu_static_arch $target)/g" $target_file
+    fi
+    sed -i -- "s%__S6_OVERLAY__%$(s6_overlay_url $target)%g" $target_file
+    sed -i -- "s%__BASEIMAGE__%$(alpine_base_image $target)%g" $target_file
+done

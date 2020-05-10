@@ -1,0 +1,14 @@
+#!/bin/bash
+
+my_dir="$(dirname "${BASH_SOURCE[0]}")"
+source "$my_dir/_env"
+
+manifest_tool_repo=estesp/manifest-tool
+
+curl -Lo manifest-tool $(github_repo_latest_url $manifest_tool_repo)/manifest-tool-linux-amd64
+chmod +x manifest-tool
+
+cp multi-arch-manifest.template multi-arch-manifest.yaml
+sed -i -- "s%__IMAGE_NAME__%$DOCKER_REPO:$DOCKER_TAG%g" multi-arch-manifest.yaml
+
+./manifest-tool push from-spec multi-arch-manifest.yaml
