@@ -208,5 +208,5 @@ curl -s https://api.nordvpn.com/server | jq -c '.[] | .categories[].name' | jq -
 
 If you have any problems with or questions about this image, please contact me through a [GitHub issue](https://github.com/azinchen/nordvpn/issues) or [email](mailto:alexander@zinchenko.com).
 
-[dockerhub-badge]: https://img.shields.io/docker/pulls/azinchen/minio?style=flat-square
-[dockerhub-link]: https://hub.docker.com/repository/docker/azinchen/minio
+[dockerhub-badge]: https://img.shields.io/docker/pulls/azinchen/nordvpn?style=flat-square
+[dockerhub-link]: https://hub.docker.com/repository/docker/azinchen/nordvpn
