@@ -92,6 +92,13 @@ docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
 
 In this example the VPN connection will be reconnected in the 5th minute every 3 hours.
 
+## Reconnect
+
+By the fault the container will try to reconnect to the same server when disconnected, in order to reconnect to another recommended server automatically add env variable:
+```
+ - OPENVPN_OPTS=--pull-filter ignore "ping-restart" --ping-exit 180
+```
+
 ## Check Internet connection by cron
 
 This container checks Internet connection via VPN by cron.
@@ -147,20 +154,6 @@ docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
            --link vpn:foo -d dperson/nginx \
            -w "http://bit:9091/transmission;/transmission" \
            -w "http://foo:8000/foo;/foo"
-```
-
-## Reconnect
-By the fault the container will try to reconnect to the same server when disconnected, in order to reconnect to another recommended server automatically add env variable:
-```
- - OPENVPN_OPTS=--pull-filter ignore "ping-restart" --ping-exit 180
-```
-
-## Connectivity check
-
-There are several environment variables which might be used to check the Internet connectivity thru the VPN connection, `CHECK_CONNECTION_CRON`, `CHECK_CONNECTION_URL`, `CHECK_CONNECTION_ATTEMPTS` and `CHECK_CONNECTION_ATTEMPT_INTERVAL`:
-```
- - CHECK_CONNECTION_CRON=*/10 * * * *
- - CHECK_CONNECTION_URL=https://www.google.com;https://www.microsoft.com;https://www.apple.com;https://www.amazon.com
 ```
 
 # Environment variables
