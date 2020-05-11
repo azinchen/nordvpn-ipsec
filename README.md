@@ -18,7 +18,7 @@ This container was designed to be started first to provide a connection to other
 
 ## Supported Architectures
 
-The image supports multiple architectures such as `x86-64` and `armhf`. You can pull specific arch images via tags.
+The image supports multiple architectures such as `amd64`, `arm` and `arm64`.
 
 The new features are introduced to 'edge' version, but this version might contain issues. Avoid to use 'edge' image in production environment.
 
@@ -26,10 +26,8 @@ The architectures supported by this image are:
 
 | Architecture | Tag |
 | :----: | --- |
-| x86-64 | latest |
-| x86-64 | edge |
-| armhf | armhf |
-| aarch64 | aarch64 |
+| x86-64, armhf, aarch64 | latest |
+| x86-64, armhf, aarch64 | edge |
 
 ## Starting an NordVPN instance
 
@@ -45,6 +43,35 @@ Once it's up other containers can be started using it's network connection:
 
 ```
 docker run -it --net=container:vpn -d some/docker-container
+```
+
+## docker-compose
+
+```
+version: "3"
+services:
+  vpn:
+    image: azinchen/nordvpn:latest
+    cap_add:
+      - net_admin
+    devices:
+      - /dev/net/tun
+    environment:
+      - USER=user@email.com
+      - PASS='pas$word'
+      - COUNTRY=Spain;Switzerland
+      - CATEGORY=P2P
+      - RANDOM_TOP=10
+      - RECREATE_VPN_CRON=5 */3 * * *
+      - NETWORK=192.168.1.0/24;192.168.2.0/24
+      - OPENVPN_OPTS=--mute-replay-warnings
+    ports:
+      - 8080:80
+    restart: unless-stopped
+  
+  web:
+    image: nginx
+    network_mode: service:vpn
 ```
 
 ## Filter NordVPN servers
@@ -120,6 +147,20 @@ docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
            -w "http://foo:8000/foo;/foo"
 ```
 
+## Reconnect
+By the fault the container will try to reconnect to the same server when disconnected, in order to reconnect to another recommended server automatically add env variable:
+```
+ - OPENVPN_OPTS=--pull-filter ignore "ping-restart" --ping-exit 180
+```
+
+## Connectivity check
+
+There are several environment variables which might be used to check the Internet connectivity thru the VPN connection, `CHECK_CONNECTION_CRON`, `CHECK_CONNECTION_URL`, `CHECK_CONNECTION_ATTEMPTS` and `CHECK_CONNECTION_ATTEMPT_INTERVAL`:
+```
+ - CHECK_CONNECTION_CRON=*/10 * * * *
+ - CHECK_CONNECTION_URL=https://www.google.com;https://www.microsoft.com;https://www.apple.com;https://www.amazon.com
+```
+
 # Environment variables
 
 Container images are configured using environment variables passed at runtime.
@@ -129,6 +170,7 @@ Container images are configured using environment variables passed at runtime.
    * `Dedicated IP`
    * `Double VPN`
    * `Obfuscated Servers`
+   * `Onion Over VPN`
    * `P2P`
    * `Standard VPN servers`
  * `PROTOCOL`          - Specify OpenVPN protocol. Only one protocol can be selected. Allowed protocols are:
