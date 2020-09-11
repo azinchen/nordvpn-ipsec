@@ -7,6 +7,45 @@ ovpn_dir="/ovpn"
 auth_file="$base_dir/auth"
 config_file="$base_dir/config.ovpn"
 
+### iptablesServer: adds or removes a iptable rule for the remote (server) in the config file
+# Arguments:
+#    mode) can be 'A' for append a rule or 'D' for delete (default)
+# Return: none
+iptablesServer() {
+    mode=${1-"D"}
+    
+    if [[ -f "$config_file" ]]; then
+        config_remote=`cat $config_file | awk '$1 == "remote" \
+            {print $2,$3,$4}'`
+        config_ip=`echo $config_remote | awk '{print $1}'`
+        config_port=`echo $config_remote | awk '{print $2}'`
+        config_proto=`echo $config_remote | awk '{print $3}'`
+
+        if [[ -z "$config_proto" ]]; then
+            config_proto=`cat $config_file | awk '$1 == "proto" {print $2}'`
+        fi
+
+        #get only the first three letters as the proto can be also be tcp6/udp6
+        config_proto="${config_proto:0:3}"
+
+        if [ $mode == "A" ]; then
+            echo "Adding iptable rule for: $config_ip $config_port \
+                $config_proto"
+        else
+            echo "Deleting iptable rule for: $config_ip $config_port \
+                $config_proto"
+        fi
+        
+        iptables -$mode OUTPUT -p $config_proto -m $config_proto \
+            -d $config_ip --dport $config_port -j ACCEPT
+        ip6tables -$mode OUTPUT -p $config_proto -m $config_proto \
+            -d $config_ip --dport $config_port -j ACCEPT 2> /dev/null
+    fi
+}
+
+#remove iptables rules for the current config
+iptablesServer D
+
 # Use api.nordvpn.com
 servers=`curl -s $URL_NORDVPN_API`
 servers=`echo $servers | jq -c '.[] | select(.features.openvpn_udp == true)' && \
@@ -143,5 +182,7 @@ cp "$config" "$config_file"
 echo "script-security 2" >> "$config_file"
 echo "up /etc/openvpn/up.sh" >> "$config_file"
 echo "down /etc/openvpn/down.sh" >> "$config_file"
+
+iptablesServer A
 
 exit 0
