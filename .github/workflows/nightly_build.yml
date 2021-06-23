@@ -1,11 +1,12 @@
-name: nightly_build
+name: Nightly_build
 
 on:
   schedule:
     - cron: 0 2 * * *
 
 env:
-  CONFIG_FILE: settings.conf
+  BRANCH: "edge"
+  PLATFORMS: "linux/amd64,linux/386,linux/arm64,linux/arm/v7,linux/arm/v6"
 
 jobs:
   nightly_build:
@@ -13,36 +14,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.4
         with:
-          ref: edge
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: all
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+          ref: ${{ env.BRANCH }}
 
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v1.10.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v1.10.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ github.token }}
 
-      - name: Build and push edge
-        uses: docker/build-push-action@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1.2.0
         with:
-          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7,linux/arm/v6,linux/ppc64le
+          platforms: ${{ env.PLATFORMS }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1.3.0
+
+      - name: Build and push ${{ env.BRANCH }}
+        uses: docker/build-push-action@v2.5.0
+        with:
+          platforms: ${{ env.PLATFORMS }}
           push: true
           tags: |
-            ${{ github.repository }}:edge
-            ghcr.io/${{ github.repository }}:edge
+            ${{ github.repository }}:${{ env.BRANCH }}
+            ghcr.io/${{ github.repository }}:${{ env.BRANCH }}
