@@ -90,7 +90,7 @@ jobs:
             (steps.branch.outputs.from_pr == 'false')
         uses: peter-evans/create-pull-request@v3.10.0
         with:
-          token: ${{ secrets.DUPLICACY_REPO_PAT }}
+          token: ${{ secrets.NORDVPN_REPO_PAT }}
           branch: ${{ steps.repository_version.outputs.branch }}
           commit-message: Bump ${{ matrix.repository }} from ${{ steps.config_version.outputs.version }} to ${{ steps.repository_version.outputs.version }}
           delete-branch: true
