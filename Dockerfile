@@ -70,7 +70,6 @@ RUN echo "**** upgrade packages ****" && \
 COPY --from=rootfs-builder /rootfs/ /
 
 VOLUME ["/config"]
-VOLUME ["/data"]
 
 WORKDIR  /config
 
