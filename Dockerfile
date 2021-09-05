@@ -5,11 +5,11 @@ ENV PACKAGE="just-containers/s6-overlay"
 ARG TARGETPLATFORM
 COPY /github_packages.json /tmp/github_packages.json
 
-RUN echo "**** install mandatory packages ****" && \
+RUN echo "**** upgrade packages ****" && \
+    apk --no-cache --no-progress add openssl=1.1.1l-r0 && \
+    echo "**** install mandatory packages ****" && \
     apk --no-cache --no-progress add tar=1.34-r0 \
         jq=1.6-r1 && \
-    echo "**** upgrade packages ****" && \
-    apk --no-cache --no-progress add openssl=1.1.1l-r0 && \
     echo "**** create folders ****" && \
     mkdir -p /s6 && \
     echo "**** download ${PACKAGE} ****" && \
@@ -50,7 +50,9 @@ ENV URL_NORDVPN_API="https://api.nordvpn.com/server" \
     CHECK_CONNECTION_ATTEMPTS=5 \
     CHECK_CONNECTION_ATTEMPT_INTERVAL=10
 
-RUN echo "**** install mandatory packages ****" && \
+RUN echo "**** upgrade packages ****" && \
+    apk --no-cache --no-progress add openssl=1.1.1l-r0 && \
+    echo "**** install mandatory packages ****" && \
     apk --no-cache --no-progress add bash=5.1.4-r0 \
         curl=7.78.0-r0 \
         unzip=6.0-r9 \
@@ -58,8 +60,6 @@ RUN echo "**** install mandatory packages ****" && \
         ip6tables=1.8.7-r1 \
         jq=1.6-r1 \
         openvpn=2.5.2-r0 && \
-    echo "**** upgrade packages ****" && \
-    apk --no-cache --no-progress add openssl=1.1.1l-r0 && \
     echo "**** create folders ****" && \
     mkdir -p /vpn && \
     mkdir -p /ovpn && \
