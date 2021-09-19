@@ -16,33 +16,25 @@ jobs:
         id: branch
         shell: bash
         run: |
-          FROM_PR=false;
-          if [[ ${GITHUB_REF} == *"packageupdaterbot/"* ]]; then
-            FROM_PR=true;
-          fi
-          echo "::set-output name=from_pr::${FROM_PR}"
-
           DATE=$(date +%y%m%d)
           echo "::set-output name=date::${DATE}"
 
-          BRANCH="ovpnupdaterbot/ovpnupdate-${DATE}"
-          echo "::set-output name=branch::${BRANCH}"
+          PR_BRANCH="ovpnupdaterbot/ovpnupdate-${DATE}"
+          echo "::set-output name=pr_branch::${PR_BRANCH}"
 
-          echo "Base branch=${BRANCH}, from_pr=${FROM_PR}, date=${DATE}"
+          echo "Base pr_branch=${PR_BRANCH}, date=${DATE}"
 
       - name: Update ovpn.zip
-        if: ${{ steps.branch.outputs.from_pr == 'false' }}
         shell: bash
         run: |
           rm ovpn.zip
           wget -q https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip -qO ovpn.zip
 
       - name: Create Pull Request, Bump ovpn.zip, date ${{ steps.branch.outputs.date }}
-        if: ${{ steps.branch.outputs.from_pr == 'false' }}
         uses: peter-evans/create-pull-request@v3.10.1
         with:
           token: ${{ secrets.NORDVPN_REPO_PAT }}
-          branch: ${{ steps.branch.outputs.branch }}
+          branch: ${{ steps.branch.outputs.pr_branch }}
           commit-message: Bump ovpn.zip, date ${{ steps.branch.outputs.date }}
           delete-branch: true
           title: Bump ovpn.zip, date ${{ steps.branch.outputs.date }}
