@@ -2,14 +2,13 @@
 FROM alpine:3.14 AS s6-builder
 
 ENV PACKAGE="just-containers/s6-overlay"
+ENV PACKAGEVERSION="2.2.0.3"
 ARG TARGETPLATFORM
-COPY /github_packages.json /tmp/github_packages.json
 
 RUN echo "**** upgrade packages ****" && \
     apk --no-cache --no-progress add openssl=1.1.1l-r0 && \
     echo "**** install mandatory packages ****" && \
-    apk --no-cache --no-progress add tar=1.34-r0 \
-        jq=1.6-r1 && \
+    apk --no-cache --no-progress add tar=1.34-r0 && \
     echo "**** create folders ****" && \
     mkdir -p /s6 && \
     echo "**** download ${PACKAGE} ****" && \
@@ -21,9 +20,8 @@ RUN echo "**** upgrade packages ****" && \
         "linux/arm/v6")   echo "arm"      ;; \
         "linux/ppc64le")  echo "ppc64le"  ;; \
         *)                echo ""         ;; esac) && \
-    VERSION=$(jq -r '.[] | select(.name == "'${PACKAGE}'").version' /tmp/github_packages.json) && \
-    echo "Package ${PACKAGE} platform ${PACKAGEPLATFORM} version ${VERSION}" && \
-    wget -q "https://github.com/${PACKAGE}/releases/download/v${VERSION}/s6-overlay-${PACKAGEPLATFORM}.tar.gz" -qO /tmp/s6-overlay.tar.gz && \
+    echo "Package ${PACKAGE} platform ${PACKAGEPLATFORM} version ${PACKAGEVERSION}" && \
+    wget -q "https://github.com/${PACKAGE}/releases/download/v${PACKAGEVERSION}/s6-overlay-${PACKAGEPLATFORM}.tar.gz" -qO /tmp/s6-overlay.tar.gz && \
     tar xfz /tmp/s6-overlay.tar.gz -C /s6/
 
 # ovpn builder

@@ -31,7 +31,6 @@ jobs:
       - name: Create Pull Request, Bump ovpn.zip, date ${{ steps.downloadovpn.outputs.date }}
         uses: peter-evans/create-pull-request@v3.10.1
         with:
-          token: ${{ secrets.NORDVPN_REPO_PAT }}
           branch: ${{ steps.downloadovpn.outputs.pr_branch }}
           commit-message: Bump ovpn.zip, date ${{ steps.downloadovpn.outputs.date }}
           delete-branch: true
