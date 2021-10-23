@@ -1,15 +1,15 @@
-name: Update NordVPN VPN technologies
+name: Update NordVPN VPN server groups
 
 on:
   schedule:
     - cron: 0 3 * * *
 
 env:
-  FILE: "TECHNOLOGIES.md"
+  FILE: "GROUPS.md"
 
 jobs:
   update_ovpn:
-    name: Update NordVPN VPN technologies
+    name: Update NordVPN VPN server groups
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,11 +20,11 @@ jobs:
         shell: bash
         run: |
           {
-            echo "# List of technologies"
+            echo "# List of server groups"
             echo ""
             echo "Name | Identifier | ID"
             echo "--- | --- | ---"
-            curl -s https://api.nordvpn.com/v1/technologies | jq -r '.[] | [.name, .identifier, .id] | "\(.[0]) | \(.[1]) | \(.[2])"'
+            curl -s https://api.nordvpn.com/v1/servers/groups | jq -r '.[] | [.title, .identifier, .id] | "\(.[0]) | \(.[1]) | \(.[2])"'
           } > ${{ env.FILE }}
 
           DATE=$(date +%y%m%d)
