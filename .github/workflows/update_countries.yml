@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.3.4
 
-      - name: Update ovpn.zip
+      - name: Update ${{ env.FILE }}
         id: createfile
         shell: bash
         run: |
