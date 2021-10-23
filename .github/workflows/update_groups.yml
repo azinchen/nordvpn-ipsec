@@ -30,7 +30,7 @@ jobs:
           DATE=$(date +%y%m%d)
           echo "::set-output name=date::${DATE}"
 
-          PR_BRANCH="mdupdaterbot/update-${{ env.FILE }}-${MD5DATE}"
+          PR_BRANCH="mdupdaterbot/update-${{ env.FILE }}-${DATE}"
           echo "::set-output name=pr_branch::${PR_BRANCH}"
 
           echo "Base pr_branch=${PR_BRANCH}, date=${DATE}"
