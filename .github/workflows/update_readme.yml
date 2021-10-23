@@ -1,4 +1,4 @@
-name: Update NordVPN cities list
+name: Update NordVPN readme files
 
 on:
   schedule:
