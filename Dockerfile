@@ -24,21 +24,6 @@ RUN echo "**** upgrade packages ****" && \
     wget -q "https://github.com/${PACKAGE}/releases/download/v${PACKAGEVERSION}/s6-overlay-${PACKAGEPLATFORM}.tar.gz" -qO /tmp/s6-overlay.tar.gz && \
     tar xfz /tmp/s6-overlay.tar.gz -C /s6/
 
-# ovpn builder
-FROM alpine:3.14 AS ovpn-builder
-
-COPY /ovpn.zip /tmp/ovpn.zip
-
-RUN echo "**** upgrade packages ****" && \
-    apk --no-cache --no-progress add openssl=1.1.1l-r0 && \
-    echo "**** install mandatory packages ****" && \
-    apk --no-cache --no-progress add unzip=6.0-r9 && \
-    echo "**** create folders ****" && \
-    mkdir -p /ovpn && \
-    echo "**** download NordVPN OpenVPN config files ****" && \
-    unzip -q /tmp/ovpn.zip -d /tmp/ovpn && \
-    mv /tmp/ovpn/*/*.ovpn /ovpn
-
 # rootfs builder
 FROM alpine:3.14 AS rootfs-builder
 
@@ -50,17 +35,13 @@ RUN echo "**** upgrade packages ****" && \
 COPY root/ /rootfs/
 RUN chmod +x /rootfs/usr/bin/*
 COPY --from=s6-builder /s6/ /rootfs/
-COPY --from=ovpn-builder /ovpn/ /rootfs/ovpn/
 
 # Main image
 FROM alpine:3.14
 
 LABEL maintainer="Alexander Zinchenko <alexander@zinchenko.com>"
 
-ENV URL_NORDVPN_API="https://api.nordvpn.com/server" \
-    URL_RECOMMENDED_SERVERS="https://nordvpn.com/wp-admin/admin-ajax.php?action=servers_recommendations" \
-    PROTOCOL=openvpn_udp \
-    MAX_LOAD=70 \
+ENV TECHNOLOGY=openvpn_udp \
     RANDOM_TOP=0 \
     CHECK_CONNECTION_ATTEMPTS=5 \
     CHECK_CONNECTION_ATTEMPT_INTERVAL=10
@@ -74,9 +55,6 @@ RUN echo "**** upgrade packages ****" && \
         ip6tables=1.8.7-r1 \
         jq=1.6-r1 \
         openvpn=2.5.2-r0 && \
-    echo "**** create folders ****" && \
-    mkdir -p /vpn && \
-    mkdir -p /ovpn && \
     echo "**** cleanup ****" && \
     rm -rf /tmp/* && \
     rm -rf /var/cache/apk/*
