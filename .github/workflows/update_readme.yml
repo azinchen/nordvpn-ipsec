@@ -29,15 +29,13 @@ jobs:
           DATE=$(date +%y%m%d)
           echo "::set-output name=date::${DATE}"
 
-          PR_BRANCH="mdupdaterbot/update-${{ env.FILE }}-${DATE}"
-          echo "::set-output name=pr_branch::${PR_BRANCH}"
-
-          echo "Base pr_branch=${PR_BRANCH}, date=${DATE}"
+          echo "Base date=${DATE}"
 
       - name: Create Pull Request, update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
         uses: peter-evans/create-pull-request@v3.10.1
         with:
-          branch: ${{ steps.createfile.outputs.pr_branch }}
+          branch: mdupdaterbot/update-${{ env.FILE }}
+          branch-suffix: short-commit-hash
           commit-message: Update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
           delete-branch: true
           title: Update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
@@ -73,15 +71,13 @@ jobs:
           DATE=$(date +%y%m%d)
           echo "::set-output name=date::${DATE}"
 
-          PR_BRANCH="mdupdaterbot/update-${{ env.FILE }}-${DATE}"
-          echo "::set-output name=pr_branch::${PR_BRANCH}"
-
-          echo "Base pr_branch=${PR_BRANCH}, date=${DATE}"
+          echo "Base date=${DATE}"
 
       - name: Create Pull Request, update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
         uses: peter-evans/create-pull-request@v3.10.1
         with:
-          branch: ${{ steps.createfile.outputs.pr_branch }}
+          branch: mdupdaterbot/update-${{ env.FILE }}
+          branch-suffix: short-commit-hash
           commit-message: Update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
           delete-branch: true
           title: Update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
@@ -117,15 +113,13 @@ jobs:
           DATE=$(date +%y%m%d)
           echo "::set-output name=date::${DATE}"
 
-          PR_BRANCH="mdupdaterbot/update-${{ env.FILE }}-${DATE}"
-          echo "::set-output name=pr_branch::${PR_BRANCH}"
-
-          echo "Base pr_branch=${PR_BRANCH}, date=${DATE}"
+          echo "Base date=${DATE}"
 
       - name: Create Pull Request, update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
         uses: peter-evans/create-pull-request@v3.10.1
         with:
-          branch: ${{ steps.createfile.outputs.pr_branch }}
+          branch: mdupdaterbot/update-${{ env.FILE }}
+          branch-suffix: short-commit-hash
           commit-message: Update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
           delete-branch: true
           title: Update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
@@ -161,15 +155,13 @@ jobs:
           DATE=$(date +%y%m%d)
           echo "::set-output name=date::${DATE}"
 
-          PR_BRANCH="mdupdaterbot/update-${{ env.FILE }}-${DATE}"
-          echo "::set-output name=pr_branch::${PR_BRANCH}"
-
-          echo "Base pr_branch=${PR_BRANCH}, date=${DATE}"
+          echo "Base date=${DATE}"
 
       - name: Create Pull Request, update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
         uses: peter-evans/create-pull-request@v3.10.1
         with:
-          branch: ${{ steps.createfile.outputs.pr_branch }}
+          branch: mdupdaterbot/update-${{ env.FILE }}
+          branch-suffix: short-commit-hash
           commit-message: Update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
           delete-branch: true
           title: Update ${{ env.FILE }}, date ${{ steps.createfile.outputs.date }}
