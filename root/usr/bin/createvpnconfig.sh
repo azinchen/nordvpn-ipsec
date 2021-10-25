@@ -268,7 +268,7 @@ if [[ "$protocol" == "udp" ]]; then
 elif [[ "$protocol" == "tcp" ]]; then
     sed -i "s/__PORT__/443/g" "$ovpnfile"
 else
-    echo "ERROR: TECHNOLOGY environment variable contains wrong parameter ("$TECHNOLOGY")"
+    echo "ERROR: TECHNOLOGY environment variable contains wrong parameter \""$TECHNOLOGY"\""
 fi
 
 # Create auth_file

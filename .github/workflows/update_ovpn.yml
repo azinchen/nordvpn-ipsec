@@ -29,16 +29,13 @@ jobs:
           DATE=$(date +%y%m%d)
           echo "::set-output name=date::${DATE}"
 
-          MD5=($(md5sum /tmp/ovpn.zip))
-          PR_BRANCH="ovpnupdaterbot/ovpnupdate-${MD5}"
-          echo "::set-output name=pr_branch::${PR_BRANCH}"
-
-          echo "Base pr_branch=${PR_BRANCH}, date=${DATE}"
+          echo "Base date=${DATE}"
 
       - name: Create Pull Request, update template.ovpn, date ${{ steps.downloadovpn.outputs.date }}
         uses: peter-evans/create-pull-request@v3.10.1
         with:
-          branch: ${{ steps.downloadovpn.outputs.pr_branch }}
+          branch: ovpnupdaterbot/ovpnupdate
+          branch-suffix: short-commit-hash
           commit-message: Update template.ovpn, date ${{ steps.downloadovpn.outputs.date }}
           delete-branch: true
           title: Update template.ovpn, date ${{ steps.downloadovpn.outputs.date }}
