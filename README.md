@@ -7,7 +7,7 @@
 [![Docker image size][dockerhub-size]][dockerhub-link]
 [![GitHub Last Commit][github-lastcommit]][github-link]
 
-This is an OpenVPN client docker container that use least loaded NordVPN servers. It makes routing containers' traffic through OpenVPN easy.
+This is an OpenVPN client docker container that uses recommended NordVPN server. It makes routing containers traffic through OpenVPN easy.
 
 ## What is OpenVPN?
 
@@ -23,7 +23,7 @@ This container was designed to be started first to provide a connection to other
 
 ### Supported Architectures
 
-The image supports multiple architectures such as `amd64`, `x86`, `arm/v6`, `arm/v7` and `arm64`.
+The image supports multiple architectures such as `amd64`, `x86`, `arm/v6`, `arm/v7`, `arm64` and `ppc64le`.
 
 ### Starting an NordVPN instance
 
@@ -31,8 +31,8 @@ The image supports multiple architectures such as `amd64`, `x86`, `arm/v6`, `arm
 docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
            -e USER=user@email.com -e PASS=password \
            -e RANDOM_TOP=n -e RECREATE_VPN_CRON=string \
-           -e COUNTRY=country1;country2 -e CATEGORY=category1;category2 \
-           -e PROTOCOL=protocol -d azinchen/nordvpn
+           -e COUNTRY=country1;country2 -e GROUP=group1;group2 \
+           -e TECHNOLOGY=technology -d azinchen/nordvpn
 ```
 
 Once it's up other containers can be started using it's network connection:
@@ -55,8 +55,8 @@ services:
     environment:
       - USER=user@email.com
       - PASS=password
-      - COUNTRY=Spain;Switzerland
-      - CATEGORY=P2P
+      - COUNTRY=Spain;Hong Kong;IE;131
+      - GROUP=Standard VPN servers;legacy_p2p;23
       - RANDOM_TOP=10
       - RECREATE_VPN_CRON=5 */3 * * *
       - NETWORK=192.168.1.0/24;192.168.2.0/24
@@ -72,7 +72,7 @@ services:
 
 ### Filter NordVPN servers
 
-This container selects least loaded server from NordVPN pool. Server list can be filtered by setting `COUNTRY`, `CATEGORY` and/or `PROTOCOL` environment variables. If filtered list is empty, recommended server is selected.
+This container selects recommended. The list of recommended servers can be filtered by setting `COUNTRY`, `GROUP` and/or `TECHNOLOGY` environment variables.
 
 ### Reconnect by cron
 
@@ -155,17 +155,9 @@ docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
 
 Container images are configured using environment variables passed at runtime.
 
-* `COUNTRY`           - Use servers from countries in the list (IE Australia;New Zeland). Several countries can be selected using semicolon.
-* `CATEGORY`          - Use servers from specific categories (IE P2P;Anti DDoS). Several categories can be selected using semicolon. Allowed categories are:
-  * `Dedicated IP`
-  * `Double VPN`
-  * `Obfuscated Servers`
-  * `Onion Over VPN`
-  * `P2P`
-  * `Standard VPN servers`
-* `PROTOCOL`          - Specify OpenVPN protocol. Only one protocol can be selected. Allowed protocols are:
-  * `openvpn_udp`
-  * `openvpn_tcp`
+* `COUNTRY`           - Use servers from countries in the list (IE Australia;New Zeland). Several countries can be selected using semicolon. Country can be defined by Country name, Code or ID. The full list is [here][nordvpn-countries].
+* `GROUPS`            - Use servers from specific group. Several groups can be selected using semicolon. Group can be defined by Name, Identifier or ID. The full list is [here][nordvpn-groups].
+* `TECHNOLOGY`        - User servers with specific technology supported. Only one technololgy can be selected. Technology can be defined by Name, Identifier or ID. The full list is [here][nordvpn-groups]. NOTE: Only OpenVPN servers are supported by this container.
 * `RANDOM_TOP`        - Place n servers from filtered list in random order. Useful with `RECREATE_VPN_CRON`.
 * `RECREATE_VPN_CRON` - Set period of selecting new server in format for crontab file. Disabled by default.
 * `CHECK_CONNECTION_CRON` - Set period of checking Internet connection in format for crontab file. Disabled by default.
@@ -177,22 +169,6 @@ Container images are configured using environment variables passed at runtime.
 * `NETWORK`           - CIDR network (IE 192.168.1.0/24), add a route to allows replies once the VPN is up. Several networks can be added to route using semicolon.
 * `NETWORK6`          - CIDR IPv6 network (IE fe00:d34d:b33f::/64), add a route to allows replies once the VPN is up. Several networks can be added to route using semicolon.
 * `OPENVPN_OPTS`      - Used to pass extra parameters to openvpn [full list](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-4/).
-
-## Environment variable's keywords
-
-The list of keywords for environment variables might be changed, check the allowed keywords by the following commands:
-
-`COUNTRY`
-
-```bash
-curl -s https://api.nordvpn.com/server | jq -c '.[] | .country' | jq -s -a -c 'unique | .[]'
-```
-
-`CATEGORY`
-
-```bash
-curl -s https://api.nordvpn.com/server | jq -c '.[] | .categories[].name' | jq -s -a -c 'unique | .[]'
-```
 
 ## Issues
 
@@ -206,4 +182,8 @@ If you have any problems with or questions about this image, please contact me t
 [github-link]: https://github.com/azinchen/nordvpn
 [github-issues]: https://github.com/azinchen/nordvpn/issues
 [github-build]: https://img.shields.io/github/workflow/status/azinchen/nordvpn/CI_CD_Task
+[nordvpn-cities]: https://github.com/azinchen/nordvpn/blob/master/CITIES.md
+[nordvpn-countries]: https://github.com/azinchen/nordvpn/blob/master/COUNTRIES.md
+[nordvpn-groups]: https://github.com/azinchen/nordvpn/blob/master/GROUPS.md
+[nordvpn-technologies]: https://github.com/azinchen/nordvpn/blob/master/TECHNOLOGIES.md
 [email-link]: mailto:alexander@zinchenko.com
