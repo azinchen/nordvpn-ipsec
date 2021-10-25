@@ -31,7 +31,7 @@ The image supports multiple architectures such as `amd64`, `x86`, `arm/v6`, `arm
 docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
            -e USER=user@email.com -e PASS=password \
            -e RANDOM_TOP=n -e RECREATE_VPN_CRON=string \
-           -e COUNTRY=country1;country2 -e GROUP=group1;group2 \
+           -e COUNTRY=country1;country2 -e GROUP=group \
            -e TECHNOLOGY=technology -d azinchen/nordvpn
 ```
 
@@ -56,7 +56,7 @@ services:
       - USER=user@email.com
       - PASS=password
       - COUNTRY=Spain;Hong Kong;IE;131
-      - GROUP=Standard VPN servers;legacy_p2p;23
+      - GROUP=Standard VPN servers
       - RANDOM_TOP=10
       - RECREATE_VPN_CRON=5 */3 * * *
       - NETWORK=192.168.1.0/24;192.168.2.0/24
@@ -155,9 +155,9 @@ docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
 
 Container images are configured using environment variables passed at runtime.
 
-* `COUNTRY`           - Use servers from countries in the list (IE Australia;New Zeland). Several countries can be selected using semicolon. Country can be defined by Country name, Code or ID. The full list is [here][nordvpn-countries].
-* `GROUPS`            - Use servers from specific group. Several groups can be selected using semicolon. Group can be defined by Name, Identifier or ID. The full list is [here][nordvpn-groups].
-* `TECHNOLOGY`        - User servers with specific technology supported. Only one technololgy can be selected. Technology can be defined by Name, Identifier or ID. The full list is [here][nordvpn-groups]. NOTE: Only OpenVPN servers are supported by this container.
+* `COUNTRY`           - Use servers from countries in the list (IE Australia;New Zeland). Several countries can be selected using semicolon. Country can be defined by Country name, Code or ID [full list][nordvpn-countries].
+* `GROUPS`            - Use servers from specific group. Only one group can be selected. Group can be defined by Name, Identifier or ID [full list][nordvpn-groups].
+* `TECHNOLOGY`        - User servers with specific technology supported. Only one technololgy can be selected. Technology can be defined by Name, Identifier or ID [full list][nordvpn-groups]. NOTE: Only OpenVPN servers are supported by this container.
 * `RANDOM_TOP`        - Place n servers from filtered list in random order. Useful with `RECREATE_VPN_CRON`.
 * `RECREATE_VPN_CRON` - Set period of selecting new server in format for crontab file. Disabled by default.
 * `CHECK_CONNECTION_CRON` - Set period of checking Internet connection in format for crontab file. Disabled by default.
