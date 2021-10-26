@@ -8,11 +8,10 @@ serverip=$(echo "$server" | jq -r '.ip')
 
 echo "Select unrestricted server hostname=\"$serverhostname\" ip=\"$serverip\""
 
-sed -i "s/__SERVICE_USER__/$SERVICE_USER/g" /etc/ipsec.secrets
-sed -i "s/__SERVICE_PASS__/$SERVICE_PASS/g" /etc/ipsec.secrets
+echo "$SERVICE_USER : EAP \"$SERVICE_PASS\"" >> "/etc/ipsec.secrets"
 
-sed -i "s/__SERVICE_USER__/$SERVICE_USER/g" /etc/ipsec.conf
-sed -i "s/__SERVER_IP__/$serverip/g" /etc/ipsec.conf
-sed -i "s/__SERVER_HOSTNAME__/$serverhostname/g" /etc/ipsec.conf
+sed -i "s/__SERVICE_USER__/$SERVICE_USER/g" "/etc/ipsec.conf"
+sed -i "s/__SERVER_IP__/$serverip/g" "/etc/ipsec.conf"
+sed -i "s/__SERVER_HOSTNAME__/$serverhostname/g" "/etc/ipsec.conf"
 
 exit 0
