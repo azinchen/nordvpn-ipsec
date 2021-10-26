@@ -54,6 +54,7 @@ RUN echo "**** upgrade packages ****" && \
         iptables=1.8.7-r1 \
         ip6tables=1.8.7-r1 \
         jq=1.6-r1 \
+        strongswan=5.9.1-r3 \
         openvpn=2.5.2-r0 && \
     echo "**** cleanup ****" && \
     rm -rf /tmp/* && \
