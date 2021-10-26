@@ -1,0 +1,58 @@
+[
+  {
+    "hostname": "jp588.nordvpn.com",
+    "ip": "172.104.117.235"
+  },
+  {
+    "hostname": "jp560.nordvpn.com",
+    "ip": "172.104.117.243"
+  },
+  {
+    "hostname": "jp598.nordvpn.com",
+    "ip": "172.104.107.40"
+  },
+  {
+    "hostname": "jp599.nordvpn.com",
+    "ip": "172.104.107.169"
+  },
+  {
+    "hostname": "jp558.nordvpn.com",
+    "ip": "139.162.81.152"
+  },
+  {
+    "hostname": "jp558.nordvpn.com",
+    "ip": "139.162.81.253"
+  },
+  {
+    "hostname": "jp560.nordvpn.com",
+    "ip": "139.162.81.202"
+  },
+  {
+    "hostname": "jp560.nordvpn.com",
+    "ip": "139.162.81.138"
+  },
+  {
+    "hostname": "jp598.nordvpn.com",
+    "ip": "139.162.81.129"
+  },
+  {
+    "hostname": "jp598.nordvpn.com",
+    "ip": "139.162.81.204"
+  },
+  {
+    "hostname": "jp598.nordvpn.com",
+    "ip": "139.162.81.166"
+  },
+  {
+    "hostname": "jp598.nordvpn.com",
+    "ip": "139.162.81.219"
+  },
+  {
+    "hostname": "jp599.nordvpn.com",
+    "ip": "139.162.81.145"
+  },
+  {
+    "hostname": "jp599.nordvpn.com",
+    "ip": "139.162.81.241"
+  }
+]
