@@ -48,7 +48,7 @@ jobs:
             github_actions
 
   update_jsons:
-    name: Update countries.json
+    name: Update json file
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -66,9 +66,9 @@ jobs:
 
           echo "::set-output name=name::${NAME}"
 
-          echo "Base name=$(NAME), date=${DATE}"
+          echo "Base name=${NAME}"
 
-      - name: Update ${{ steps.file.outputs.name }}
+      - name: Update ${{ steps.file.outputs.name }}.json
         id: getjson
         shell: bash
         run: |
@@ -83,7 +83,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3.10.1
         with:
           branch: ovpnupdaterbot/${{ steps.file.outputs.name }}json
-          commit-message: Update template.ovpn, date ${{ steps.getjson.outputs.date }}
+          commit-message: Update ${{ steps.file.outputs.name }}.json, date ${{ steps.getjson.outputs.date }}
           delete-branch: true
           title: Update ${{ steps.file.outputs.name }}.json, date ${{ steps.getjson.outputs.date }}
           body: |
