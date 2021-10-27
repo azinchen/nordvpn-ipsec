@@ -62,7 +62,7 @@ jobs:
         shell: bash
         run: |
           URL=${{ matrix.url }}
-          NAME=echo ${URL##*/}
+          NAME=$(echo ${URL##*/})
 
           echo "::set-output name=name::${NAME}"
 
