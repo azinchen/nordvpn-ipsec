@@ -1,7 +1,6 @@
 name: Update config files
 
 on:
-  push:
   schedule:
     - cron: 0 3 * * *
 
