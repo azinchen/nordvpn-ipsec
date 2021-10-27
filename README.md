@@ -156,7 +156,7 @@ docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
 Container images are configured using environment variables passed at runtime.
 
 * `COUNTRY`           - Use servers from countries in the list (IE Australia;New Zeland). Several countries can be selected using semicolon. Country can be defined by Country name, Code or ID [full list][nordvpn-countries].
-* `GROUPS`            - Use servers from specific group. Only one group can be selected. Group can be defined by Name, Identifier or ID [full list][nordvpn-groups].
+* `GROUP`             - Use servers from specific group. Only one group can be selected. Group can be defined by Name, Identifier or ID [full list][nordvpn-groups].
 * `TECHNOLOGY`        - User servers with specific technology supported. Only one technololgy can be selected. Technology can be defined by Name, Identifier or ID [full list][nordvpn-technologies]. NOTE: Only OpenVPN servers are supported by this container.
 * `RANDOM_TOP`        - Place n servers from filtered list in random order. Useful with `RECREATE_VPN_CRON`.
 * `RECREATE_VPN_CRON` - Set period of selecting new server in format for crontab file. Disabled by default.
