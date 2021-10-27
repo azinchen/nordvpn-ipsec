@@ -22,4 +22,6 @@ echo "Bypass requests to NordVPN thru regular connection"
 iptables  -A OUTPUT -o eth0 -d "api.nordvpn.com" -j ACCEPT
 ip6tables -A OUTPUT -o eth0 -d "api.nordvpn.com" -j ACCEPT 2> /dev/null
 
+#iptables  -A OUTPUT -m policy --pol ipsec -d "api.nordvpn.com" --dir out -j ACCEPT
+
 exit 0
