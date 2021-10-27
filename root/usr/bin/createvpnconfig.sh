@@ -1,8 +1,8 @@
 #!/usr/bin/with-contenv bash
 
-nvcountries=$(curl -s https://api.nordvpn.com/v1/servers/countries | jq -c '.[]')
-nvgroups=$(curl -s https://api.nordvpn.com/v1/servers/groups | jq -c '.[]')
-nvtechnologies=$(curl -s https://api.nordvpn.com/v1/technologies | jq -c '.[]')
+nvcountries=$(cat /etc/nordvpn/countries.json | jq -c '.[]')
+nvgroups=$(cat /etc/nordvpn/groups.json | jq -c '.[]')
+nvtechnologies=$(cat /etc/nordvpn/technologies.json | jq -c '.[]')
 
 numericregex="^[0-9]+$"
 
