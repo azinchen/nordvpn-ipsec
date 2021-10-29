@@ -34,7 +34,6 @@ jobs:
         uses: peter-evans/create-pull-request@v3.10.1
         with:
           branch: ovpnupdaterbot/ovpnupdate
-          branch-suffix: short-commit-hash
           commit-message: Update template.ovpn, date ${{ steps.downloadovpn.outputs.date }}
           delete-branch: true
           title: Update template.ovpn, date ${{ steps.downloadovpn.outputs.date }}
