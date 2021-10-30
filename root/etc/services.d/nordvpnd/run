@@ -1,0 +1,6 @@
+#!/usr/bin/with-contenv bash
+
+authfile="/tmp/auth"
+ovpnfile="/tmp/nordvpn.ovpn"
+
+exec openvpn --config "$ovpnfile" --auth-user-pass "$authfile" --auth-nocache ${OPENVPN_OPTS}

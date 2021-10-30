@@ -1,0 +1,19 @@
+#!/usr/bin/with-contenv bash
+
+echo "Setup strongsWan"
+
+server=$(cat /etc/nordvpn/unblockedservers.json | jq -c '.[]' | shuf | head -n 1)
+serverhostname=$(echo "$server" | jq -r '.hostname')
+serverip=$(echo "$server" | jq -r '.ip')
+
+echo "Select unrestricted server hostname=\"$serverhostname\" ip=\"$serverip\""
+
+echo "$SERVICE_USER : EAP \"$SERVICE_PASS\"" >> "/etc/ipsec.secrets"
+
+sed -i "s/__SERVICE_USER__/$SERVICE_USER/g" "/etc/ipsec.conf"
+sed -i "s/__SERVER_IP__/$serverip/g" "/etc/ipsec.conf"
+sed -i "s/__SERVER_HOSTNAME__/$serverhostname/g" "/etc/ipsec.conf"
+
+ipsec restart
+
+exit 0

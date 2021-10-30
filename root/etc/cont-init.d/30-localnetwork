@@ -1,0 +1,25 @@
+#!/usr/bin/with-contenv bash
+
+echo "Bypass requests to local network thru regular connection"
+
+if [ ! -z $NETWORK ]; then
+    gw=`ip route | awk '/default/ {print $3}'`
+    IFS=';'
+    read -ra networks <<< "$NETWORK"
+    for nw in "${networks[@]}"; do
+        ip route add to $nw via $gw dev eth0
+        iptables -A OUTPUT --destination $nw -j ACCEPT
+    done
+fi
+
+if [ ! -z $NETWORK6 ]; then
+    gw=`ip -6 route | awk '/default/ {print $3}'`
+    IFS=';'
+    read -ra networks6 <<< "$NETWORK6"
+    for nw6 in "${networks6[@]}"; do
+        ip -6 route add to $nw6 via $gw dev eth0
+        ip6tables -A OUTPUT --destination $nw6 -j ACCEPT 2> /dev/null
+    done
+fi
+
+exit 0
