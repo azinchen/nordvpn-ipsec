@@ -1,4 +1,4 @@
-[![logo](https://github.com/azinchen/nordvpn/raw/master/NordVpn_logo.png)](https://www.nordvpn.com/)
+[![logo](https://github.com/azinchen-ipsec/raw/main/NordVpn_logo.png)](https://www.nordvpn.com/)
 
 # NordVPN
 
@@ -47,7 +47,7 @@ docker run -it --net=container:vpn -d some/docker-container
 version: "3"
 services:
   vpn:
-    image: azinchen/nordvpn:latest
+    image: azinchen/nordvpn-ipsec:latest
     cap_add:
       - net_admin
     devices:
@@ -81,7 +81,7 @@ This container selects server and its config during startup and maintains connec
 ```bash
 docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
            -e RECREATE_VPN_CRON="5 */3 * * *" -e RANDOM_TOP=10
-           -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+           -e USER=user@email.com -e PASS=password -d azinchen/nordvpn-ipsec
 ```
 
 In this example the VPN connection will be reconnected in the 5th minute every 3 hours.
@@ -101,7 +101,7 @@ This container checks Internet connection via VPN by cron.
 ```bash
 docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
            -e CHECK_CONNECTION_CRON="*/5 * * * *" -e CHECK_CONNECTION_URL="https://www.google.com"
-           -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+           -e USER=user@email.com -e PASS=password -d azinchen/nordvpn-ipsec
 ```
 
 In this example the VPN connection will be checked every 5 minutes.
@@ -113,7 +113,7 @@ The environment variable NETWORK must be your local network that you would conne
 ```bash
 docker run -ti --cap-add=NET_ADMIN --device /dev/net/tun --name vpn \
            -p 8080:80 -e NETWORK=192.168.1.0/24 \ 
-           -e USER=user@email.com -e PASS=password -d azinchen/nordvpn
+           -e USER=user@email.com -e PASS=password -d azinchen/nordvpn-ipsec
 ```
 
 Now just create the second container _without_ the `-p` parameter, only inlcude the `--net=container:vpn`, the port should be declare in the vpn container.
@@ -135,7 +135,7 @@ docker run -it --name web -p 80:80 -p 443:443 \
 Which will start a Nginx web server on local ports 80 and 443, and proxy any requests under `/<PATH>` to the to `http://<service_name>:<PORT>/<URI>`. To use a concrete example:
 
 ```bash
-docker run -it --name bit --net=container:vpn -d bubundut/nordvpn
+docker run -it --name bit --net=container:vpn -d bubundut/nordvpn-ipsec
 docker run -it --name web -p 80:80 -p 443:443 --link vpn:bit \
            -d dperson/nginx -w "http://bit:9091/transmission;/transmission"
 ```
@@ -174,16 +174,16 @@ Container images are configured using environment variables passed at runtime.
 
 If you have any problems with or questions about this image, please contact me through a [GitHub issue][github-issues] or [email][email-link].
 
-[dockerhub-badge]: https://img.shields.io/docker/pulls/azinchen/nordvpn?style=flat-square
-[dockerhub-link]: https://hub.docker.com/repository/docker/azinchen/nordvpn
-[dockerhub-pulls]: https://img.shields.io/docker/pulls/azinchen/nordvpn
-[dockerhub-size]: https://img.shields.io/docker/image-size/azinchen/nordvpn/latest
-[github-lastcommit]: https://img.shields.io/github/last-commit/azinchen/nordvpn
-[github-link]: https://github.com/azinchen/nordvpn
-[github-issues]: https://github.com/azinchen/nordvpn/issues
-[github-build]: https://img.shields.io/github/workflow/status/azinchen/nordvpn/CI_CD_Task
-[nordvpn-cities]: https://github.com/azinchen/nordvpn/blob/master/CITIES.md
-[nordvpn-countries]: https://github.com/azinchen/nordvpn/blob/master/COUNTRIES.md
-[nordvpn-groups]: https://github.com/azinchen/nordvpn/blob/master/GROUPS.md
-[nordvpn-technologies]: https://github.com/azinchen/nordvpn/blob/master/TECHNOLOGIES.md
+[dockerhub-badge]: https://img.shields.io/docker/pulls/azinchen/nordvpn-ipsec?style=flat-square
+[dockerhub-link]: https://hub.docker.com/repository/docker/azinchen/nordvpn-ipsec
+[dockerhub-pulls]: https://img.shields.io/docker/pulls/azinchen/nordvpn-ipsec
+[dockerhub-size]: https://img.shields.io/docker/image-size/azinchen/nordvpn-ipsec/latest
+[github-lastcommit]: https://img.shields.io/github/last-commit/azinchen/nordvpn-ipsec
+[github-link]: https://github.com/azinchen/nordvpn-ipsec
+[github-issues]: https://github.com/azinchen/nordvpn-ipsec/issues
+[github-build]: https://img.shields.io/github/workflow/status/azinchen/nordvpn-ipsec/CI_CD_Task
+[nordvpn-cities]: https://github.com/azinchen/nordvpn-ipsec/blob/main/CITIES.md
+[nordvpn-countries]: https://github.com/azinchen/nordvpn-ipsec/blob/main/COUNTRIES.md
+[nordvpn-groups]: https://github.com/azinchen/nordvpn-ipsec/blob/main/GROUPS.md
+[nordvpn-technologies]: https://github.com/azinchen/nordvpn-ipsec/blob/main/TECHNOLOGIES.md
 [email-link]: mailto:alexander@zinchenko.com
