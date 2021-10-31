@@ -28,9 +28,7 @@ RUN echo "**** upgrade packages ****" && \
 FROM alpine:3.14 AS rootfs-builder
 
 RUN echo "**** upgrade packages ****" && \
-    apk --no-cache --no-progress add openssl=1.1.1l-r0 && \
-    echo "**** create folders ****" && \
-    mkdir -p /ovpn
+    apk --no-cache --no-progress add openssl=1.1.1l-r0
 
 COPY root/ /rootfs/
 RUN chmod +x /rootfs/usr/bin/*
@@ -60,9 +58,5 @@ RUN echo "**** upgrade packages ****" && \
     rm -rf /var/cache/apk/*
 
 COPY --from=rootfs-builder /rootfs/ /
-
-VOLUME ["/config"]
-
-WORKDIR  /config
 
 ENTRYPOINT ["/init"]
