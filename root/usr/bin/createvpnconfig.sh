@@ -236,14 +236,6 @@ echo "script-security 2" >> "$ovpnfile"
 echo "up /etc/openvpn/up.sh" >> "$ovpnfile"
 echo "down /etc/openvpn/down.sh" >> "$ovpnfile"
 
-if [[ "$DEBUG" == "info" ]]; then
-    echo "verb 2" >> "$ovpnfile"
-elif [[ "$DEBUG" == "trace" ]]; then
-    echo "verb 3" >> "$ovpnfile"
-elif [[ "$DEBUG" == "trace+" ]]; then
-    echo "verb 4" >> "$ovpnfile"
-fi
-
 sed -i "s/__IP__/$serverip/g" "$ovpnfile"
 sed -i "s/__PROTOCOL__/$protocol/g" "$ovpnfile"
 
