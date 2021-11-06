@@ -63,4 +63,6 @@ if [[ -n ${docker6_network} ]]; then
     }
 fi
 
+#iptables  -A OUTPUT -m policy --pol ipsec -d "api.nordvpn.com" --dir out -j ACCEPT
+
 exit 0

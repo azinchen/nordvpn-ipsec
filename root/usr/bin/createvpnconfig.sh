@@ -247,9 +247,4 @@ else
     echo "ERROR: TECHNOLOGY environment variable contains wrong parameter \""$TECHNOLOGY"\""
 fi
 
-# Create auth_file
-echo "$USER" > "$authfile"
-echo "$PASS" >> "$authfile"
-chmod 0600 "$authfile"
-
 exit 0
