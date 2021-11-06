@@ -28,9 +28,7 @@ RUN echo "**** upgrade packages ****" && \
 FROM alpine:3.14 AS rootfs-builder
 
 RUN echo "**** upgrade packages ****" && \
-    apk --no-cache --no-progress add openssl=1.1.1l-r0 && \
-    echo "**** create folders ****" && \
-    mkdir -p /ovpn
+    apk --no-cache --no-progress add openssl=1.1.1l-r0
 
 COPY root/ /rootfs/
 RUN chmod +x /rootfs/usr/bin/*
@@ -41,8 +39,7 @@ FROM alpine:3.14
 
 LABEL maintainer="Alexander Zinchenko <alexander@zinchenko.com>"
 
-ENV TECHNOLOGY=openvpn_udp \
-    RANDOM_TOP=0 \
+ENV RANDOM_TOP=0 \
     CHECK_CONNECTION_ATTEMPTS=5 \
     CHECK_CONNECTION_ATTEMPT_INTERVAL=10
 
@@ -54,16 +51,15 @@ RUN echo "**** upgrade packages ****" && \
         iptables=1.8.7-r1 \
         ip6tables=1.8.7-r1 \
         jq=1.6-r1 \
-        strongswan=5.9.1-r2 \
-        openvpn=2.5.2-r0 && \
+        shadow=4.8.1-r0 \
+        strongswan=5.9.1-r2 && \
+    echo "**** create process user ****" && \
+    addgroup --system --gid 912 nordvpn && \
+    adduser --system --uid 912 --disabled-password --no-create-home --ingroup nordvpn nordvpn && \
     echo "**** cleanup ****" && \
     rm -rf /tmp/* && \
     rm -rf /var/cache/apk/*
 
 COPY --from=rootfs-builder /rootfs/ /
-
-VOLUME ["/config"]
-
-WORKDIR  /config
 
 ENTRYPOINT ["/init"]
