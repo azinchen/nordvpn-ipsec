@@ -24,7 +24,7 @@ jobs:
           echo "Base date=${DATE}"
 
       - name: Create Pull Request, update NordVPN.pem, date ${{ steps.downloadipseckey.outputs.date }}
-        uses: peter-evans/create-pull-request@v3.10.1
+        uses: peter-evans/create-pull-request@v3.11.0
         with:
           branch: keyupdaterbot/ipseckeyupdate
           commit-message: Update NordVPN.pem, date ${{ steps.downloadipseckey.outputs.date }}
@@ -71,7 +71,7 @@ jobs:
           echo "Base date=${DATE}"
 
       - name: Create Pull Request, update ${{ steps.file.outputs.name }}.json, date ${{ steps.getjson.outputs.date }}
-        uses: peter-evans/create-pull-request@v3.10.1
+        uses: peter-evans/create-pull-request@v3.11.0
         with:
           branch: ovpnupdaterbot/${{ steps.file.outputs.name }}json
           commit-message: Update ${{ steps.file.outputs.name }}.json, date ${{ steps.getjson.outputs.date }}
